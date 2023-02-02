@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.byau.system.mapper.RoleMapper">
+	
+	
+	
+	<select id="getAllRole" resultType="cn.byau.system.entity.Role">
+		select * from t_role
+	</select>
+	
+	
+	<sql id="selectRoleVo">
+        select role_id, role_name from t_role
+    </sql>
+
+    
+    
+    <select id="selectRoleById" parameterType="int" resultType="cn.byau.system.entity.Role">
+        <include refid="selectRoleVo"/>
+        where role_id = #{roleId}
+    </select>
+    
+    <insert id="insertRole" parameterType="Role" useGeneratedKeys="true" keyProperty="roleId">
+        insert into t_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleName != null and roleName != ''">role_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleName != null and roleName != ''">#{roleName},</if>
+         </trim>
+    </insert>
+    
+     <update id="updateRole" parameterType="Role">
+        update t_role
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="roleName != null and roleName != ''">role_name = #{roleName},</if>
+        </trim>
+        where role_id = #{roleId}
+    </update>
+    <delete id="deleteRoleById" parameterType="int">
+        delete from t_role where role_id = #{roleId}
+    </delete>
+	
+</mapper>

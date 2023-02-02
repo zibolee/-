@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.byau.modules.mapper.MessageKindMapper">
+
+  
+  	<resultMap id="MessageKindMap" type="MessageKind">
+		<id column="messagekind_id" property="messagekindId" />
+		<result column="messagekind_name" property="messagekindName"  />
+		<result column="messagekind_remark" property="messagekindRemark"  />
+		<association property="member" javaType="Member">
+		<id column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		</association>
+		</resultMap>
+  
+  
+  
+  <select id="list3t" resultMap="MessageKindMap">
+		SELECT 
+           ck.messagekind_id,
+           ck.messagekind_name,
+           ck.messagekind_remark,
+           c.message_name,
+           s.member_name
+		FROM 
+		messagekind ck 
+		LEFT JOIN  message c ON ck.messagekind_id=c.messagekind_id 
+		LEFT JOIN  member s  ON ck.member_id=s.member_id 
+	</select>  
+  
+  <select id="list" resultType="MessageKind"  >
+    select 
+    messagekind_id, messagekind_name, messagekind_remark
+    from messagekind
+    
+  </select>
+  
+  
+  <select id="getByKindId" resultType="MessageKind"  >
+    select 
+    messagekind_id, messagekind_name, messagekind_remark
+    from messagekind
+    where messagekind_id = #{messagekindId}
+  </select>
+<select id="countByKindId" resultType="MessageKind"  >
+  select count(*) as count, ck.messagekind_id, ck.messagekind_name 
+  from messagekind ck inner join message c 
+  on ck.messagekind_id = c.messagekind_id 
+  group by ck.messagekind_id, ck.messagekind_name
+  
+ </select>
+  
+  
+  
+  
+  <delete id="delete" parameterType="String">
+    delete from messagekind
+    where messagekind_id = #{messagekindId}
+  </delete>
+  <insert id="save" parameterType="MessageKind" >
+    insert into messagekind
+        (messagekind_id,
+        messagekind_name,
+        messagekind_remark)
+        values(
+        #{messagekindId},
+        #{messagekindName},
+        #{messagekindRemark})
+  </insert>
+  <update id="update" parameterType="MessageKind" >
+    update messagekind set
+        messagekind_name = #{messagekindName},
+        messagekind_remark = #{messagekindRemark}
+    where messagekind_id = #{messagekindId}
+  </update>
+	
+</mapper>

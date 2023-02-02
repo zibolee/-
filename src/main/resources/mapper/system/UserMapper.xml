@@ -1,0 +1,59 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.byau.system.mapper.UserMapper">
+
+
+
+    <insert id="save" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        insert into t_user values(#{id},#{username},#{password},#{salt})
+    </insert>
+
+
+    <select id="findByUserName2" parameterType="String" resultType="User">
+        select id,username,password,salt from t_user
+        where username = #{username}
+    </select>
+
+
+    <resultMap id="userMap" type="User">
+        <id column="uid" property="id"/>
+        <result column="username" property="username"/>
+        <!--角色信息-->
+        <collection property="roles" javaType="list" ofType="Role">
+            <id column="roleId" property="roleId"/>
+            <result column="roleName" property="roleName"/>
+        </collection>
+    </resultMap>
+    
+    <update id="update" parameterType="User" >
+    update t_user
+    <set >
+      <if test="username != null" >
+        username = #{username},
+      </if>
+      <if test="password != null" >
+        password = #{password},
+      </if>
+      
+      
+    </set>
+    where id = #{id}
+  </update>
+
+    <select id="findRolesByUserName" parameterType="String" resultMap="userMap">
+     SELECT u.id uid,u.username,r.role_id roleId,r.role_name  roleName
+      FROM t_user u
+      LEFT JOIN user_role ur
+      ON u.id=ur.user_id
+      LEFT JOIN t_role r
+      ON ur.role_id=r.role_id
+      WHERE u.username=#{username}
+    </select>
+
+    <select id="findPermsByRoleId" resultType="Module">
+      SELECT m.* FROM 
+		role_module rm, 
+		t_module m 
+		WHERE  rm.module_id = m.id 
+		and  role_id = #{roleId}
+    </select>
+</mapper>

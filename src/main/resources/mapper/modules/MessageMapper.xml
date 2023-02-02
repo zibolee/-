@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.byau.modules.mapper.MessageMapper">
+
+	<resultMap id="messageMap" type="Message">
+		<id column="message_id" property="messageId" jdbcType="VARCHAR" />
+		<result column="message_tit" property="messageTit" jdbcType="VARCHAR" />
+		<result column="messagekind_id" property="messagekindId" jdbcType="VARCHAR" />
+		<result column="message_content" property="messageContent" jdbcType="VARCHAR" />
+		<result column="message_date" property="messageDate" jdbcType="VARCHAR" />
+		<result column="message_reply" property="messageReply" jdbcType="VARCHAR" />
+		<association property="messageKind" javaType="MessageKind">
+			<id column="messagekind_id" property="messagekindId" jdbcType="VARCHAR" />
+		<result column="messagekind_name" property="messagekindName" jdbcType="VARCHAR" />
+		<result column="messagekind_remark" property="messagekindRemark" jdbcType="VARCHAR" />
+		
+		 <association property="member" javaType="Member">
+			<id column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		</association>
+   </association>
+
+
+	</resultMap>
+
+
+	<select id="getById" resultType="Message">
+		SELECT
+		message_id, 
+		message_tit, 
+		messagekind_id, 
+		message_content, 
+		message_date, 
+		message_reply
+		FROM 
+		  message
+		WHERE 
+		  message_id = #{value}
+	</select>
+
+	<select id="list" resultType="Message">
+		select
+		message_id, 
+		message_tit, 
+		messagekind_id, 
+		message_content, 
+		message_date, 
+		message_reply
+		from message
+	</select>
+	
+
+	<select id="listByPage" resultMap="messageMap">
+		SELECT 
+           c.message_id,
+           c.message_tit,
+           c.messagekind_id,
+           c.message_content,
+           c.message_date,
+           c.message_reply,
+           ck.messagekind_name,
+           s.member_name
+		FROM 
+		message c 
+		LEFT JOIN  messagekind ck ON c.messagekind_id=ck.messagekind_id 
+		LEFT JOIN  member s  ON ck.member_id=s.member_id 
+		WHERE 
+		message_id lIKE concat('%',#{value},'%')
+	</select>
+
+
+	
+	<insert id="save" parameterType="Message">
+		insert into message(
+				message_id,
+				message_tit,
+				messagekind_id,
+				message_content,
+				message_date,
+				message_reply) 
+				values(
+				#{messageId},
+			    #{messageTit},
+				#{messagekindId},
+				#{messageContent},
+				#{messageDate},
+				#{messageReply}
+				)
+			
+	</insert>
+	<update id="update" parameterType="Message">
+		update message set
+				message_tit = #{messageTit},
+				messagekind_id = #{messagekindId},
+				message_content = #{messageContent},
+				message_date = #{messageDate},
+				message_reply = #{messageReply}
+		where message_id =#{messageId}
+	</update>
+	
+
+	<insert id="insertBatch" parameterType="java.util.List">
+			message_id,
+				message_tit,
+				messagekind_id,
+				message_content,
+				message_date,
+				message_reply) values
+		<foreach collection="list"  item="message"
+			separator=",">
+			(#{messageId},
+			    #{messageTit},
+				#{messagekindId},
+				#{messageContent},
+				#{messageDate},
+				#{messageReply})
+		</foreach>
+	</insert>
+	
+	<delete id="deleteBatch">
+        delete from message where message_id in
+        <foreach item="messageId" collection="list" 
+              open="(" separator="," close=")">
+            #{messageId}
+        </foreach>
+    </delete>
+	
+</mapper>

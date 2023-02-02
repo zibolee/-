@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.byau.system.mapper.RoleModuleMapper">
+	
+	<select id="findModuleIdsByRoleId" parameterType="int" resultType="cn.byau.system.entity.Module">
+		
+		
+		SELECT m.* FROM 
+		role_module rm, 
+		t_module m 
+		WHERE  rm.module_id = m.id 
+		and  role_id = #{roleId}
+	</select>
+	
+	<delete id="deleteByRoleId" parameterType="int">
+		DELETE FROM role_module where role_id = #{roleId}
+	</delete>
+	
+	<insert id="addRoleModule">
+		INSERT role_module VALUE(${roleId}, ${moduleId})
+	</insert>
+	
+</mapper>

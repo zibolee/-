@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.byau.system.mapper.LogInfoMapper">
+<!-- 	<resultMap id="BaseResultMap" type="LogInfo"> -->
+<!-- 		<id column="logId" property="logId" /> -->
+<!-- 		<result column="userId" property="userId" /> -->
+<!-- 		<result column="loginTime" property="loginTime" /> -->
+<!-- 	</resultMap> -->
+
+
+<!-- 	<resultMap id="BaseResultMap2" type="LogInfo"> -->
+<!-- 		<id column="logId" property="logId" /> -->
+<!-- 		<result column="userId" property="userId" /> -->
+<!-- 		<result column="loginTime" property="loginTime" /> -->
+<!-- 		<association property="user" javaType="User"> -->
+<!-- 			<id column="userId" property="userId" /> -->
+<!-- 			<result property="userName" column="userName" /> -->
+<!-- 		</association> -->
+<!-- 	</resultMap> -->
+
+<!-- 	<select id="list" resultMap="BaseResultMap2" parameterType="java.util.Map"> -->
+<!-- 		select log.*,u.userName -->
+<!-- 		from -->
+<!-- 		loginfo log,User u -->
+<!-- 		where log.userId=u.userId -->
+<!-- 		<if test="beginTime!=null "> -->
+<!--     <![CDATA[   and DATE_FORMAT(logintime, '%Y-%m-%d %H:%i')>=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d %H:%i') ]]> -->
+<!-- 		</if> -->
+<!-- 		<if test="endTime!=null "> -->
+<!--     <![CDATA[  and DATE_FORMAT(logintime, '%Y-%m-%d %H:%i') <= DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i') ]]> -->
+<!-- 		</if> -->
+<!-- 	</select> -->
+	<resultMap id="BaseResultMap" type="LogInfo">
+		<id column="logid" property="logId" />
+		<result column="userid" property="userId" />
+		<result column="logintime" property="loginTime" />
+		<result column="username" property="user.username" />
+		
+	</resultMap>
+    <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select log.logid,log.userid,log.logintime,u.userName
+		from
+		loginfo log,t_user u
+		where log.userid=u.id
+		<if test="startTime!=null and startTime!=''">
+    <![CDATA[   and logintime>=#{startTime}]]>
+		</if>
+		<if test="endTime!=null and endTime!='' ">
+    <![CDATA[  and logintime<=#{endTime}]]>
+		</if>
+	</select>
+
+
+	<sql id="Base_Column_List">
+		id, userId, loginTime
+	</sql>
+
+	<insert id="save" parameterType="LogInfo">
+		insert into loginfo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="logId != null">
+				log_id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="loginTime != null">
+				login_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="logId != null">
+				#{logId},
+			</if>
+			<if test="userId != null">
+				#{userId},
+			</if>
+			<if test="loginTime != null">
+				#{loginTime},
+			</if>
+		</trim>
+	</insert>
+
+</mapper>
